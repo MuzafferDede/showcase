@@ -55,8 +55,9 @@ const circular = (value, max, min = 1) => {
 };
 
 let timer, busy;
+
 const debounce = (callback, delay) => {
-  if(!busy) {
+  if (!busy) {
     callback();
     busy = true;
     return;
@@ -73,15 +74,11 @@ const translate = computed(() => {
 });
 
 const scroll = (event) => {
-  debounce(
-    () => {
-      active.value =
-        event.deltaY < 0
-          ? circular(active.value - 1, props.items.length)
-          : circular(active.value + 1, props.items.length);
-    },
-    50,
-    event.deltaY < 0
-  );
+  debounce(() => {
+    active.value = circular(
+      active.value + Math.sign(event.deltaY),
+      props.items.length
+    );
+  }, 50);
 };
 </script>
