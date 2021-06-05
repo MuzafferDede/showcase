@@ -5,7 +5,7 @@
         <div
           v-for="item in items"
           @click="active = item"
-          @wheel.prevent="check"
+          @wheel.prevent="scroll"
           :key="item"
           class="
             transform
@@ -41,7 +41,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { defineProps, ref, computed } from "vue";
 
@@ -55,25 +54,34 @@ const circular = (value, max, min = 1) => {
   return Math.min(Math.max(value, min), max);
 };
 
-var timerId;
-const debounceFunction = (func, delay) => {
-  clearTimeout(timerId);
+let timer, busy;
+const debounce = (callback, delay) => {
+  if(!busy) {
+    callback();
+    busy = true;
+    return;
+  }
+  clearTimeout(timer);
 
-  timerId = setTimeout(() => {
-    func();
+  timer = setTimeout(() => {
+    busy = false;
   }, delay);
 };
 
 const translate = computed(() => {
-  return `transform: translateY(${(active.value - 1) * -50 + 25 }vh)`;
+  return `transform: translateY(${(active.value - 1) * -50 + 25}vh)`;
 });
-const check = (event) => {
-  debounceFunction(() => {
-    active.value =
-      event.deltaY < 0
-        ? circular(active.value - 1, props.items.length)
-        : circular(active.value + 1, props.items.length);
-    console.log(event.wheelDelta);
-  }, 100);
+
+const scroll = (event) => {
+  debounce(
+    () => {
+      active.value =
+        event.deltaY < 0
+          ? circular(active.value - 1, props.items.length)
+          : circular(active.value + 1, props.items.length);
+    },
+    50,
+    event.deltaY < 0
+  );
 };
 </script>
