@@ -1,7 +1,8 @@
 <template>
   <div class="container h-screen overflow-hidden">
+    <div class="fixed inset-0 transition-all transform duration-150" :class="[classes[active],{'translate-x-full' : !selected}]"></div>
     <div class="transition-all duration-500" :style="translate">
-      <div class="w-2/3 lg:w-1/2 mx-auto animate-wiggle space-y-10">
+      <div class="w-2/3 lg:w-1/2 mx-auto space-y-10" :class="{'animate-wiggle' : !selected}">
         <div
           tabindex="0"
           v-for="item in items"
@@ -50,10 +51,9 @@
               inset-[-1rem]
               border-[2rem] border-blue-50
               rounded-lg
-              animate-wiggle
               cursor-pointer
             "
-            :class="{ 'ring-red-400 ring-8': active === item.id }"
+            :class="{ 'ring-red-400 ring-8': active === item.id,'animate-wiggle' : !selected }"
           ></div>
         </div>
       </div>
